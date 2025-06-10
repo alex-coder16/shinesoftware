@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'dashboard/images/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'dashboard/images/favicon-32x32.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'dashboard/images/apple-touch-icon.png' %}">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard_styles.css' %}">
+    
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-900 text-gray-100 font-poppins flex overflow-hidden h-screen">
+
+    <!-- Background effects -->
+    <div class="fixed top-0 left-0 w-full h-full z-[-1] overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 opacity-50"></div>
+        <div class="absolute top-0 left-0 w-64 h-64 bg-purple-600 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-indigo-600 rounded-full filter blur-3xl opacity-20 animate-pulse animation-delay-2000"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-60 bg-gray-800 bg-opacity-50 backdrop-blur-md p-6 space-y-6 fixed top-0 left-0 h-full z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="{% static 'dashboard/images/logo.png' %}" alt="Logo" class="h-10 mr-3"> <span class="text-xl font-semibold">Swift</span>
+            </div>
+            <button id="mobile-close-btn" class="md:hidden text-gray-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="relative group">
+            <div id="username-blur-bg" class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-20 filter blur-lg transition-opacity duration-300 rounded-md"></div>
+            <div class="relative bg-gray-700 bg-opacity-50 p-4 rounded-md shadow-md">
+                <div class="flex items-center space-x-3">
+                    <img src="{{ user.profile.avatar.url|default:'https://via.placeholder.com/40' }}" alt="User Avatar" id="sidebar-avatar-img" class="w-10 h-10 rounded-full border-2 border-purple-500 object-cover">
+                    <div>
+                        <h4 class="font-semibold text-sm" id="username-display">{{ user.username|default:'Username' }}</h4>
+                        <span class="text-xs text-purple-400 bg-purple-900 bg-opacity-50 px-2 py-0.5 rounded-full" id="user-role-badge">{{ user.profile.role|default:'Role' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="space-y-2 flex-1 overflow-y-auto hide-scrollbar" style="max-height: calc(100vh - 220px);">
+            <h5 class="text-gray-500 text-xs uppercase tracking-wider font-medium px-2">Menu</h5>
+            <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 text-gray-300 hover:bg-purple-600 hover:text-white p-3 rounded-md transition-colors duration-200 menu-item" data-target="dashboard-content">
+                <i class="fas fa-tachometer-alt w-5 h-5"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'settings' %}" class="flex items-center space-x-3 text-gray-300 hover:bg-purple-600 hover:text-white p-3 rounded-md transition-colors duration-200 menu-item" data-target="panel-settings-content">
+                <i class="fas fa-cogs w-5 h-5"></i>
+                <span>Panel Settings</span>
+            </a>
+            <a href="{% url 'user' %}" class="flex items-center space-x-3 text-gray-300 hover:bg-purple-600 hover:text-white p-3 rounded-md transition-colors duration-200 menu-item" data-target="user-settings-content">
+                <i class="fas fa-user-cog w-5 h-5"></i>
+                <span>User Settings</span>
+            </a>
+            <a href="{% url 'routes' %}" class="flex items-center space-x-3 text-gray-300 hover:bg-purple-600 hover:text-white p-3 rounded-md transition-colors duration-200 menu-item" data-target="routes-content">
+                <i class="fas fa-route w-5 h-5"></i>
+                <span>Routes</span>
+            </a>
+
+        </nav>
+
+        <div class="pt-4 border-t border-gray-700">
+            <button id="logout-btn" class="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transition-colors duration-200">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden md:ml-60 transition-all duration-300 ease-in-out">
+        <header class="bg-gray-800 bg-opacity-30 backdrop-blur-sm shadow-lg p-4 md:hidden">
+            <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </header>
+
+        <div id="notification-popup" class="fixed top-5 right-5 bg-gray-700 text-white p-4 rounded-lg shadow-lg z-[100] hidden flex items-center space-x-3 border-l-4 border-purple-500">
+            <div id="notification-icon" class="text-xl"></div>
+            <div>
+                <h4 id="notification-title" class="font-semibold">Notification</h4>
+                <p id="notification-message" class="text-sm">This is a notification message.</p>
+            </div>
+            <button id="notification-close-btn" class="absolute top-2 right-2 text-gray-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <main id="main-content-area" class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 p-6 space-y-8">
+            {% block content %}
+            <!-- Page-specific content will go here -->
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- Side Panel (Client Information) -->
+    <div id="sidepanel" class="fixed top-0 right-0 h-full w-96 bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-[60] p-6 flex flex-col border-l-2 border-purple-600">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-white">Client Information</h2>
+            <button onclick="closeNav()" class="text-gray-400 hover:text-white transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto space-y-3 hide-scrollbar pr-2">
+            <!-- Existing Info Fields -->
+            <div><strong class="text-purple-400">IP Address:</strong> <span id="info-ip" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">User Agent:</strong> <span id="info-userAgent" class="text-gray-300 break-all">N/A</span></div>
+            {## --- FIX START --- ##}
+            <div><strong class="text-purple-400">Referrer:</strong> <span id="info-referrer" class="text-gray-300 break-all">N/A</span></div>
+            <div><strong class="text-purple-400">Language:</strong> <span id="info-language" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Screen Resolution:</strong> <span id="info-screenResolution" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Cookies Enabled:</strong> <span id="info-cookiesEnabled" class="text-gray-300">N/A</span></div>
+            {## --- FIX END --- ##}
+            <div><strong class="text-purple-400">Current Page:</strong> <span id="info-currentPage" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Status:</strong> <span id="info-status" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Timezone:</strong> <span id="info-timezone" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Browser:</strong> <span id="info-browser" class="text-gray-300">N/A</span></div>
+            <div><strong class="text-purple-400">Device:</strong> <span id="info-device" class="text-gray-300">N/A</span></div>
+            
+            <!-- **** NEW: Section for Captured Data **** -->
+            <div id="info-captured-data-container" class="mt-6 pt-4 border-t border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-3">Captured Data:</h3>
+                <div id="info-captured-data-content" class="space-y-4">
+                    <!-- Captured data will be dynamically inserted here by JavaScript -->
+                </div>
+            </div>
+            <!-- **** END NEW Section **** -->
+
+            {## --- FIX START --- ##}
+            <!-- Dedicated Seed Phrase Section -->
+            <div class="mt-6 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-semibold text-white">Seed Phrase</h3>
+                    <button id="copy-seed-panel" class="text-gray-400 hover:text-white transition-colors" title="Copy Seed Phrase">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <pre id="info-seed" class="text-xs bg-gray-700 p-3 rounded-md text-gray-300 overflow-x-auto max-h-40 hide-scrollbar">N/A</pre>
+            </div>
+            {## --- FIX END --- ##}
+            
+            <!-- Existing sections for Cookies, Local Storage, etc. can remain -->
+            <div class="mt-6 pt-4 border-t border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-2">Cookies:</h3>
+                <pre id="info-cookies" class="text-xs bg-gray-700 p-3 rounded-md text-gray-300 overflow-x-auto max-h-40 hide-scrollbar">N/A</pre>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-2">Local Storage:</h3>
+                <pre id="info-localStorage" class="text-xs bg-gray-700 p-3 rounded-md text-gray-300 overflow-x-auto max-h-40 hide-scrollbar">N/A</pre>
+            </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-gray-700">
+            <button id="export-victim-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm">Export Data</button>
+        </div>
+    </div>
+
+    <!-- Client Service Modal -->
+    <div id="clientModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[70] hidden p-4">
+        <div id="modal-content" class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border-2 border-purple-600 transform scale-95 opacity-0">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-white">Select Services</h2>
+                <button id="closeModalButton" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <input type="text" id="serviceSearch" class="w-full p-3 mb-6 bg-gray-700 text-gray-200 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none placeholder-gray-500" placeholder="Search services...">
+            <div id="servicesContainer" class="flex-1 overflow-y-auto space-y-4 pr-2 hide-scrollbar">
+                <!-- Services will be loaded here by JavaScript -->
+            </div>
+            <div class="mt-8 pt-6 border-t border-gray-700 flex justify-end space-x-4">
+                <button id="deselectAllButton" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">Deselect All</button>
+                <button id="saveServicesButton" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200 button-glow">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[70] hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col border-2 border-blue-500"> <!-- Border color will be set by JS -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="infoModalTitle" class="text-2xl font-semibold text-white">Information</h2>
+                <!-- Keep a general close button, or hide it if using explicit action buttons -->
+                <button id="infoModalGeneralCloseButton" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div id="infoModalBody" class="flex-1 overflow-y-auto text-gray-300 space-y-3 pr-2 hide-scrollbar">
+                <p>This is a generic information modal.</p>
+            </div>
+            <div class="mt-8 pt-6 border-t border-gray-700 flex justify-end space-x-3">
+                <!-- Cancel/Close Button -->
+                <button id="infoModalCancelAction" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">Cancel</button>
+                <!-- OK/Confirm Button -->
+                <button id="infoModalConfirmAction" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">OK</button>
+            </div>
+        </div>
+    </div>
+    <div id="extraInputModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm p-4 hidden transition-opacity duration-300 ease-in-out opacity-0">
+        <div id="extraInputModalContent" class="bg-gray-800 border border-gray-700 text-white rounded-xl shadow-2xl w-full max-w-sm transform scale-95 transition-all duration-300 ease-in-out opacity-0">
+            <div class="p-6 text-center">
+                <h3 id="extraInputPrompt" class="text-lg font-medium mb-4 text-gray-100">Enter required information:</h3>
+                <input type="text" id="extraInputField" class="w-full bg-gray-700 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-3 placeholder-gray-400 mb-6" placeholder="">
+                <div class="flex justify-end space-x-3">
+                    <button id="cancelExtraInputBtn" type="button" class="px-5 py-2.5 text-sm font-medium text-gray-300 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">Cancel</button>
+                    <button id="confirmExtraInputBtn" type="button" class="px-5 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors button-glow focus:outline-none focus:ring-2 focus:ring-purple-500">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- External JS Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    {% comment %} <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> {% endcomment %}
+    
+    <!-- Custom JS -->
+    <script src="{% static 'dashboard/js/dashboard_scripts.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

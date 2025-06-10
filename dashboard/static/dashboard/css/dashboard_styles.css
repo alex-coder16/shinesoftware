@@ -1,0 +1,183 @@
+/* General Body and Font Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Additional global styles if needed */
+}
+
+/* Scrollbar Hiding */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Custom Scrollbar for specific elements (if needed beyond hide-scrollbar) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #2d3748; /* gray-800 */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #4a5568; /* gray-600 */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #718096; /* gray-500 */
+}
+
+/* Sidebar Styles */
+#sidebar {
+    /* Existing Tailwind classes handle most of this */
+    /* Add specific overrides or new styles here if needed */
+}
+
+#username-blur-bg {
+    /* Managed by Tailwind group-hover and opacity utilities */
+}
+
+.active-menu-item {
+    background-color: #8B5CF6; /* purple-600 */
+    color: white;
+}
+
+.active-menu-item i {
+    color: white;
+}
+
+/* Main Content Area */
+#main-content-area {
+    /* Styles for the main content area */
+}
+
+.content-section {
+    /* Base styles for content sections, if any */
+}
+
+/* Stats Cards Animation (Example - GSAP will handle more complex ones) */
+.stat-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Victims Table Styles */
+#victims-table-body tr:hover {
+    background-color: rgba(75, 85, 99, 0.3); /* gray-700 with opacity */
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px; /* full */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500; /* medium */
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-badge-online {
+    background-color: rgba(16, 185, 129, 0.2); /* bg-green-500 opacity-20 */
+    color: #10B981; /* text-green-400 */
+}
+
+.status-badge-offline {
+    background-color: rgba(239, 68, 68, 0.2); /* bg-red-500 opacity-20 */
+    color: #EF4444; /* text-red-400 */
+}
+
+.status-badge-idle {
+    background-color: rgba(245, 158, 11, 0.2); /* bg-yellow-500 opacity-20 */
+    color: #F59E0B; /* text-yellow-400 */
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+/* Side Panel Styles */
+#sidepanel {
+    /* Tailwind classes handle most of this */
+    /* Add specific overrides or new styles here if needed */
+    /* Example: Ensure it's above other content when open */
+    z-index: 60; 
+}
+
+/* Modal Styles */
+#clientModal, #infoModal {
+    /* Tailwind classes handle most of this */
+    /* Add specific overrides or new styles here if needed */
+    z-index: 70;
+}
+
+#modal-content, #infoModal .bg-gray-800 {
+    /* Base modal content styling */
+    /* Example: animation properties if not handled by JS/Tailwind */
+}
+
+.service-header.expanded .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.service-option.selected {
+    background-color: #5B21B6; /* A darker purple, adjust as needed */
+    border-left-width: 4px;
+    border-color: #A78BFA; /* Lighter purple for accent */
+}
+
+/* Button Glow Effect */
+.button-glow {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5), 0 0 5px rgba(139, 92, 246, 0.7);
+}
+
+.button-glow:hover {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.7), 0 0 10px rgba(139, 92, 246, 0.9);
+}
+
+/* Notification Popup */
+#notification-popup {
+    /* Tailwind handles most styling */
+    /* Ensure z-index is high enough */
+    z-index: 100;
+}
+
+/* Animation Delays (if needed beyond JS) */
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+/* Additional utility classes or specific component styles from testing.html */
+
+/* Example: Ensure Font Awesome icons are sized consistently if needed */
+.fas, .fab, .far {
+    /* Potentially add default sizing or alignment if issues arise */
+}
+
+/* Ensure Tippy.js tooltips are styled if default is not sufficient */
+.tippy-box[data-theme~='custom'] {
+    background-color: #374151; /* gray-700 */
+    color: #D1D5DB; /* gray-300 */
+    border-radius: 0.375rem; /* rounded-md */
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem; /* text-sm */
+}
+.tippy-box[data-theme~='custom'][data-placement^='top'] > .tippy-arrow {
+    border-top-color: #374151;
+}
+.tippy-box[data-theme~='custom'][data-placement^='bottom'] > .tippy-arrow {
+    border-bottom-color: #374151;
+}
+.tippy-box[data-theme~='custom'][data-placement^='left'] > .tippy-arrow {
+    border-left-color: #374151;
+}
+.tippy-box[data-theme~='custom'][data-placement^='right'] > .tippy-arrow {
+    border-right-color: #374151;
+}

@@ -1,0 +1,200 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Panel Settings{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Toggle Switch Styles */
+    .toggle-checkbox:checked {
+        right: 0;
+        border-color: #7C3AED; /* purple-600 */
+    }
+    .toggle-checkbox:checked + .toggle-label {
+        background-color: #7C3AED; /* purple-600 */
+    }
+    .toggle-checkbox:checked + .toggle-label::after {
+        transform: translateX(100%); /* Move the dot */
+        background-color: white;
+    }
+    .toggle-label::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 1.25rem; /* w-5 */
+        height: 1.25rem; /* h-5 */
+        background-color: white;
+        border-radius: 9999px; /* rounded-full */
+        transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="panel-settings-content" class="content-section space-y-8">
+    <div>
+        <h1 class="text-3xl font-semibold text-white">Panel Settings</h1>
+        <p class="text-gray-400 mt-1">Configure various aspects of the control panel.</p>
+    </div>
+
+    <!-- Cloudflare CAPTCHA Settings Card -->
+    <div class="bg-gray-800 bg-opacity-70 backdrop-blur-md p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300">
+        <div class="flex items-center mb-6">
+            <i class="fas fa-shield-alt text-purple-400 text-2xl mr-3"></i>
+            <h2 class="text-2xl font-semibold text-white">Cloudflare CAPTCHA Settings</h2>
+        </div>
+        
+        <form action="{% url 'save_captcha_settings' %}" method="POST" class="space-y-6"> {# Replace 'save_captcha_settings' with your actual URL name #}
+            {% csrf_token %}
+            <div>
+                <label for="site-key" class="block text-sm font-medium text-gray-300 mb-1">Site Key</label>
+                <input type="text" id="site-key" name="cloudflare_site_key" value="{{ cloudflare_settings.site_key|default:'' }}" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none placeholder-gray-500" placeholder="0x4AAAAAAA...">
+            </div>
+
+            <div>
+                <label for="secret-key" class="block text-sm font-medium text-gray-300 mb-1">Secret Key</label>
+                <input type="text" id="secret-key" name="cloudflare_secret_key" value="{{ cloudflare_settings.secret_key|default:'' }}" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none placeholder-gray-500" placeholder="0x4AAAAAAA...">
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 button-glow w-full sm:w-auto">
+                    <i class="fas fa-save mr-2"></i>Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Control Settings Card -->
+    <div class="bg-gray-800 bg-opacity-70 backdrop-blur-md p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700 hover:border-indigo-500 transition-all duration-300">
+        <div class="flex items-center mb-6">
+            <i class="fas fa-sliders-h text-indigo-400 text-2xl mr-3"></i>
+            <h2 class="text-2xl font-semibold text-white">Control Settings</h2>
+        </div>
+
+        <form action="{% url 'save_control_settings' %}" method="POST" class="space-y-6"> {# Replace 'save_control_settings' with your actual URL name #}
+            {% csrf_token %}
+            <!-- CAPTCHA Settings -->
+            <div class="pb-4 border-b border-gray-700">
+                <h3 class="text-lg font-medium text-gray-200 mb-3">CAPTCHA Settings</h3>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-300">Enable CAPTCHA</span>
+                    <label for="enable-captcha" class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="enable-captcha" name="enable_captcha" class="sr-only peer toggle-checkbox" {% if control_settings.enable_captcha %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Panel Settings -->
+            <div class="py-4 border-b border-gray-700">
+                <h3 class="text-lg font-medium text-gray-200 mb-3">Panel Settings</h3>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-300">Panel Status</span>
+                    <label for="panel-status" class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="panel-status" name="panel_status_online" class="sr-only peer toggle-checkbox" {% if control_settings.panel_status_online %}checked{% endif %}>
+                        <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Logging Settings -->
+            <div class="pt-4">
+                <h3 class="text-lg font-medium text-gray-200 mb-3">Logging Settings</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-300">Visitor Logging</span>
+                        <label for="visitor-logging" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="visitor-logging" name="log_visitor" class="sr-only peer toggle-checkbox" {% if control_settings.log_visitor %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                        </label>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-300">Deletion Logging</span>
+                        <label for="deletion-logging" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="deletion-logging" name="log_deletion" class="sr-only peer toggle-checkbox" {% if control_settings.log_deletion %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                        </label>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-300">Creation Logging</span>
+                        <label for="creation-logging" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="creation-logging" name="log_creation" class="sr-only peer toggle-checkbox" {% if control_settings.log_creation %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                        </label>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-300">Elevation Logging</span>
+                        <label for="elevation-logging" class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="elevation-logging" name="log_elevation" class="sr-only peer toggle-checkbox" {% if control_settings.log_elevation %}checked{% endif %}>
+                            <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-purple-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 toggle-label"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4">
+                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 button-glow w-full sm:w-auto">
+                    <i class="fas fa-save mr-2"></i>Save Control Settings
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // GSAP animations for page elements
+    gsap.fromTo("#panel-settings-content > div:first-child h1", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", delay: 0.2 });
+    gsap.fromTo("#panel-settings-content > div:first-child p", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+    gsap.fromTo("#panel-settings-content > div.bg-gray-800", 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.2, delay: 0.4 }
+    );
+
+    // You can add specific JS for this page here if needed, e.g., AJAX form submissions
+    // For now, the forms will submit traditionally.
+    // Example: Intercept form submission for AJAX
+    // const forms = document.querySelectorAll('#panel-settings-content form');
+    // forms.forEach(form => {
+    //     form.addEventListener('submit', function(e) {
+    //         e.preventDefault();
+    //         const formData = new FormData(form);
+    //         const actionUrl = form.action;
+    //         // Show loading state on button
+    //         const submitButton = form.querySelector('button[type="submit"]');
+    //         const originalButtonText = submitButton.innerHTML;
+    //         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+    //         submitButton.disabled = true;
+
+    //         fetch(actionUrl, {
+    //             method: 'POST',
+    //             body: formData,
+    //             headers: {
+    //                 'X-CSRFToken': formData.get('csrfmiddlewaretoken') // Ensure CSRF token is sent
+    //             }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.success) {
+    //                 showNotification(data.message || 'Settings saved successfully!', 'success', 'fas fa-check-circle');
+    //             } else {
+    //                 showNotification(data.message || 'Failed to save settings.', 'error', 'fas fa-exclamation-circle');
+    //             }
+    //         })
+    //         .catch(error => {
+    //             showNotification('An error occurred: ' + error, 'error', 'fas fa-exclamation-triangle');
+    //             console.error("Error saving settings:", error);
+    //         })
+    //         .finally(() => {
+    //             // Reset button state
+    //             submitButton.innerHTML = originalButtonText;
+    //             submitButton.disabled = false;
+    //         });
+    //     });
+    // });
+});
+</script>
+{% endblock %}

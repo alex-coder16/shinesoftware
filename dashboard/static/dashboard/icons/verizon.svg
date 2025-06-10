@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="logosandtypes_com" data-name="logosandtypes com" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 150 150">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f50a23;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="-357.15" y1="196.61" x2="-342.8" y2="162" gradientTransform="translate(716.05 432.55) scale(1.88 -1.88)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f50a23"/>
+      <stop offset="1" stop-color="#f5ff1e"/>
+    </linearGradient>
+  </defs>
+  <path class="cls-2" d="M0,0H150V150H0V0Z"/>
+  <path id="path27" class="cls-3" d="M6.9,15.48l46.78,121.86c.36,.93,1.24,1.54,2.24,1.54h37.96c-.99,0-1.88-.61-2.24-1.54L44.86,15.48H6.9Z"/>
+  <path id="path29" class="cls-1" d="M142.9,15.48l-46.78,121.86c-.36,.93-1.24,1.54-2.24,1.54H55.92c.99,0,1.88-.61,2.24-1.54L104.94,15.48h37.96Z"/>
+</svg>

